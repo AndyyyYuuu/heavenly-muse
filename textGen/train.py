@@ -6,6 +6,7 @@ from torch import nn
 from torch.utils import data
 from torch import optim
 
+
 # load ascii text and covert to lowercase
 filename = "the_sun_also_rises.txt"
 raw_text = open(f"data/{filename}", 'r', encoding='utf-8').read()
@@ -55,7 +56,7 @@ class Poet(nn.Module):
         return x
 
 
-n_epochs = 40
+n_epochs = 32
 batch_size = 32
 model = Poet()
 
@@ -93,4 +94,4 @@ for epoch in range(n_epochs):
         print(f"Time Left: approx. {mins_left} min")
 
 
-torch.save([best_model, char_to_int], "models/model_1.pth")
+torch.save([best_model, char_to_int], "models/model-2-milton.pth")
