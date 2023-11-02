@@ -1,3 +1,5 @@
+
+import time
 import numpy
 import torch
 from torch import nn
@@ -63,7 +65,9 @@ loader = data.DataLoader(data.TensorDataset(X, y), shuffle=True, batch_size=batc
 
 best_model = None
 best_loss = numpy.inf
+durations = []
 for epoch in range(n_epochs):
+    init_time = time.time()
     model.train()
     for X_batch, y_batch in loader:
         y_pred = model(X_batch)
@@ -81,6 +85,12 @@ for epoch in range(n_epochs):
         if loss < best_loss:
             best_loss = loss
             best_model = model.state_dict()
-        print("Epoch %d: Cross-entropy: %.4f" % (epoch, loss))
+        durations.append(round(init_time-time.time()))
+        mins_left = round((sum(durations)/len(durations)*(n_epochs-epoch-1))//60/5)*5
+        print(f"\n-< EPOCH {epoch} >-")
+        print(f"Cross-Entropy Loss: {loss}")
+        print(f"Time Duration: {(durations[-1])//60} min, {durations[-1]} sec")
+        print(f"Time Left: approx. {mins_left} min")
+
 
 torch.save([best_model, char_to_int], "models/model_1.pth")
