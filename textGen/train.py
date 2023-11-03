@@ -75,10 +75,18 @@ if os.path.exists(save_path):
         best_model = loaded_best_model
         char_to_int = loaded_char_to_int
         start_epoch = loaded_epoch
+        print("LOADED MODEL")
+        print(f"Epochs to train: {n_epochs-start_epoch}")
+        print(f"Save path: {save_path}")
+        input("Enter to resume training >>> ")
     else:
         print(f"Hey Andy, this model is already trained up to {n_epochs} epochs.")
         exit(0)
-
+else:
+    print("TRAIN NEW MODEL")
+    print(f"Epochs to train: {n_epochs}")
+    print(f"Save path: {save_path}")
+    input("Enter to begin training >>> ")
 
 best_loss = numpy.inf
 durations = []

@@ -5,11 +5,13 @@ from torch import nn
 from torch.utils import data
 from torch import optim
 
-best_model, char_to_int, _ = torch.load("model/model-2-milton.pth")
+best_model, char_to_int, epochs = torch.load("model/model-2-milton.pth")
+print("LOADED MODEL")
+print(f"Epochs trained: {epochs}")
 num_vocab = len(char_to_int)
 int_to_char = dict((i, c) for c, i in char_to_int.items())
 
-temperature = 0.2
+temperature = 0.6
 
 # load ascii text and covert to lowercase
 filename = "paradise_lost.txt"
@@ -40,9 +42,10 @@ writer = Poet()
 writer.load_state_dict(best_model)
 writer.eval()
 
-print("-- PROMPT --")
+print("\n-- PROMPT --")
 print(f"{prompt_txt}")
-print("---")
+print("\n-- OUTPUT --")
+
 
 with torch.no_grad():
     for i in range(gen_size):
