@@ -37,8 +37,9 @@ class Poet(nn.Module):
 writer = Poet()
 writer.load_state_dict(best_model)
 writer.eval()
-
-print(f"Prompt: {prompt_txt}")
+print("-- PROMPT --")
+print(f"{prompt_txt}")
+print("---")
 with torch.no_grad():
     for i in range(gen_size):
         x = numpy.reshape(pattern, (1, len(pattern), 1)) / float(num_vocab)

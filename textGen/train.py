@@ -2,6 +2,7 @@ import os
 import time
 import numpy
 import torch
+from datetime import datetime
 from torch import nn
 from torch.utils import data
 from torch import optim
@@ -107,7 +108,8 @@ for epoch in range(start_epoch, n_epochs):
             best_model = model.state_dict()
         durations.append(round(time.process_time()-init_time))
         mins_left = round((sum(durations)/len(durations)*(n_epochs-epoch-1))//60/5)*5
-        print(f"\n-< EPOCH {epoch} >-")
+        timestamp = datetime.now().strftime("%H:%M:%S")
+        print(f"\n-< EPOCH {epoch} at {timestamp}>-")
         print(f"Cross-Entropy Loss: {loss}")
         print(f"Time Duration: {(durations[-1])//60} min, {durations[-1]%60} sec")
         print(f"Time Left: approx. {mins_left//60} hrs, {mins_left%60} min")
