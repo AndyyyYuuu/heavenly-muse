@@ -5,12 +5,12 @@ from torch import nn
 from torch.utils import data
 from torch import optim
 
-best_model, char_to_int = torch.load("model/model-1-hemingway.pth")
+best_model, char_to_int, _ = torch.load("model/model-2-milton.pth")
 num_vocab = len(char_to_int)
 int_to_char = dict((i, c) for c, i in char_to_int.items())
 
 # load ascii text and covert to lowercase
-filename = "the_sun_also_rises.txt"
+filename = "paradise_lost.txt"
 raw_text = open(f"data/{filename}", 'r', encoding='utf-8').read()
 raw_text = raw_text.lower()
 

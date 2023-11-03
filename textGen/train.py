@@ -1,4 +1,4 @@
-
+import os
 import time
 import numpy
 import torch
@@ -6,7 +6,7 @@ from torch import nn
 from torch.utils import data
 from torch import optim
 
-save_path = "model-2-milton.pth"
+save_path = "model/model-2-milton.pth"
 
 # load ascii text and covert to lowercase
 filename = "paradise_lost.txt"
@@ -55,7 +55,7 @@ class Poet(nn.Module):
         x = self.linear(self.dropout(x))
         return x
 
-
+start_epoch = 0
 n_epochs = 32
 batch_size = 32
 model = Poet()
@@ -65,10 +65,28 @@ loss_fn = nn.CrossEntropyLoss(reduction="sum")
 loader = data.DataLoader(data.TensorDataset(X, y), shuffle=True, batch_size=batch_size)
 
 best_model = None
+
+# Load checkpoint
+if os.path.exists(save_path):
+    past_state_dict = torch.load(save_path)
+    loaded_best_model, loaded_char_to_int, loaded_epoch = past_state_dict
+    if loaded_epoch < n_epochs:
+        best_model = loaded_best_model
+        char_to_int = loaded_char_to_int
+        start_epoch = loaded_epoch
+    else:
+        print(f"Hey Andy, this model is already trained up to {n_epochs} epochs.")
+        exit(0)
+
+
 best_loss = numpy.inf
 durations = []
 print("\n*** TRAINING IN PROGRESS ***")
-for epoch in range(n_epochs):
+
+def checkpoint(best_model, char_to_int, epoch):
+    torch.save([best_model, char_to_int, epoch], save_path)
+
+for epoch in range(start_epoch, n_epochs):
     init_time = time.process_time()
     model.train()
     for X_batch, y_batch in loader:
@@ -93,6 +111,8 @@ for epoch in range(n_epochs):
         print(f"Cross-Entropy Loss: {loss}")
         print(f"Time Duration: {(durations[-1])//60} min, {durations[-1]%60} sec")
         print(f"Time Left: approx. {mins_left//60} hrs, {mins_left%60} min")
+        checkpoint(best_model, char_to_int, epoch)
 print("\n*** TRAINING COMPLETE ***")
-torch.save([best_model, char_to_int], f"models/{save_path}")
+# torch.save([best_model, char_to_int], f"models/{save_path}")
+# checkpoint(best_model, char_to_int, n_epochs)
 print(f"Model saved as \"models/{save_path}\"")
