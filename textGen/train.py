@@ -56,7 +56,7 @@ class Poet(nn.Module):
         x = self.linear(self.dropout(x))
         return x
 
-start_epoch = 0
+start_epoch = 1
 n_epochs = 32
 batch_size = 32
 model = Poet()
@@ -74,7 +74,7 @@ if os.path.exists(save_path):
     if loaded_epoch < n_epochs:
         best_model = loaded_best_model
         char_to_int = loaded_char_to_int
-        start_epoch = loaded_epoch
+        start_epoch = loaded_epoch+1
         print("LOADED MODEL")
         print(f"Epochs to train: {n_epochs-start_epoch}")
         print(f"Save path: {save_path}")
@@ -95,7 +95,8 @@ print("\n*** TRAINING IN PROGRESS ***")
 def checkpoint(best_model, char_to_int, epoch):
     torch.save([best_model, char_to_int, epoch], save_path)
 
-for epoch in range(start_epoch, n_epochs):
+for epoch in range(start_epoch, n_epochs+1):
+    print(f"\n Training epoch {epoch}/{n_epochs} ...")
     init_time = time.process_time()
     model.train()
     for X_batch, y_batch in loader:
@@ -117,7 +118,7 @@ for epoch in range(start_epoch, n_epochs):
         durations.append(round(time.process_time()-init_time))
         mins_left = round((sum(durations)/len(durations)*(n_epochs-epoch-1))//60/5)*5
         timestamp = datetime.now().strftime("%H:%M:%S")
-        print(f"\n-< EPOCH {epoch} at {timestamp}>-")
+        print(f"-< EPOCH {epoch} at {timestamp}>-")
         print(f"Cross-Entropy Loss: {loss}")
         print(f"Time Duration: {(durations[-1])//60} min, {durations[-1]%60} sec")
         print(f"Time Left: approx. {mins_left//60} hrs, {mins_left%60} min")
