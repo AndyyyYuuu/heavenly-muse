@@ -6,9 +6,10 @@ from torch import nn
 from torch.utils import data
 from torch import optim
 
+save_path = "model-2-milton.pth"
 
 # load ascii text and covert to lowercase
-filename = "the_sun_also_rises.txt"
+filename = "paradise_lost.txt"
 raw_text = open(f"data/{filename}", 'r', encoding='utf-8').read()
 raw_text = raw_text.lower()
 
@@ -39,7 +40,6 @@ print("Total Patterns: ", n_patterns)
 X = torch.tensor(dataX, dtype=torch.float32).reshape(n_patterns, seq_length, 1)
 X = X / float(num_vocab)
 y = torch.tensor(dataY)
-print(X.shape, y.shape)
 
 class Poet(nn.Module):
     def __init__(self):
@@ -67,8 +67,9 @@ loader = data.DataLoader(data.TensorDataset(X, y), shuffle=True, batch_size=batc
 best_model = None
 best_loss = numpy.inf
 durations = []
+print("\n*** TRAINING IN PROGRESS ***")
 for epoch in range(n_epochs):
-    init_time = time.time()
+    init_time = time.process_time()
     model.train()
     for X_batch, y_batch in loader:
         y_pred = model(X_batch)
@@ -86,12 +87,12 @@ for epoch in range(n_epochs):
         if loss < best_loss:
             best_loss = loss
             best_model = model.state_dict()
-        durations.append(round(init_time-time.time()))
+        durations.append(round(time.process_time()-init_time))
         mins_left = round((sum(durations)/len(durations)*(n_epochs-epoch-1))//60/5)*5
         print(f"\n-< EPOCH {epoch} >-")
         print(f"Cross-Entropy Loss: {loss}")
-        print(f"Time Duration: {(durations[-1])//60} min, {durations[-1]} sec")
-        print(f"Time Left: approx. {mins_left} min")
-
-
-torch.save([best_model, char_to_int], "models/model-2-milton.pth")
+        print(f"Time Duration: {(durations[-1])//60} min, {durations[-1]%60} sec")
+        print(f"Time Left: approx. {mins_left//60} hrs, {mins_left%60} min")
+print("\n*** TRAINING COMPLETE ***")
+torch.save([best_model, char_to_int], f"models/{save_path}")
+print(f"Model saved as \"models/{save_path}\"")
