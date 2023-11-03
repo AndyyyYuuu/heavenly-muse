@@ -5,14 +5,14 @@ from torch import nn
 from torch.utils import data
 from torch import optim
 
-best_model, char_to_int = torch.load("model/model-1-hemingway.pth")
+best_model, char_to_int, _ = torch.load("model/model-2-milton.pth")
 num_vocab = len(char_to_int)
 int_to_char = dict((i, c) for c, i in char_to_int.items())
 
 temperature = 0.2
 
 # load ascii text and covert to lowercase
-filename = "the_sun_also_rises.txt"
+filename = "paradise_lost.txt"
 raw_text = open(f"data/{filename}", 'r', encoding='utf-8').read()
 raw_text = raw_text.lower()
 
@@ -39,7 +39,11 @@ class Poet(nn.Module):
 writer = Poet()
 writer.load_state_dict(best_model)
 writer.eval()
-#print(f"Prompt: {prompt_txt}")
+
+print("-- PROMPT --")
+print(f"{prompt_txt}")
+print("---")
+
 with torch.no_grad():
     for i in range(gen_size):
         x = numpy.reshape(pattern, (1, len(pattern), 1)) / float(num_vocab)
