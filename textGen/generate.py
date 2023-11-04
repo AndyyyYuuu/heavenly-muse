@@ -11,7 +11,7 @@ print(f"Epochs trained: {epochs}")
 num_vocab = len(char_to_int)
 int_to_char = dict((i, c) for c, i in char_to_int.items())
 
-temperature = 0.6
+TEMPERATURE = 0.7
 
 # load ascii text and covert to lowercase
 filename = "paradise_lost.txt"
@@ -55,7 +55,7 @@ with torch.no_grad():
         # predicted_char = int_to_char[int(prediction.argmax())]
 
         # Model prediction to probability distribution using softmax
-        prediction_probs = torch.softmax(prediction/temperature, dim=1)
+        prediction_probs = torch.softmax(prediction/TEMPERATURE, dim=1)
         prediction_probs = prediction_probs.squeeze().numpy()
         # Sample character index from distribution
         predicted_char_index = numpy.random.choice(len(prediction_probs), p=prediction_probs)
