@@ -100,7 +100,7 @@ print("\n*** TRAINING IN PROGRESS ***")
 def checkpoint(best_model, char_to_int, epoch):
     torch.save([best_model, char_to_int, epoch], SAVE_PATH)
 
-
+previous_loss = None
 # Training loop
 for epoch in range(start_epoch, NUM_EPOCHS+1):
 
@@ -129,12 +129,20 @@ for epoch in range(start_epoch, NUM_EPOCHS+1):
 
         # Fancy stats
         durations.append(round(time.process_time()-init_time))
-        mins_left = round((sum(durations)/len(durations)*(NUM_EPOCHS-epoch-1))//60/5)*5
+        mins_left = round((sum(durations)/len(durations)*(NUM_EPOCHS-epoch))//60/5)*5
         timestamp = datetime.now().strftime("%H:%M:%S")
-        print(f"-< EPOCH {epoch} at {timestamp}>-")
-        print(f"Cross-Entropy Loss: {loss}")
-        print(f"Time Duration: {(durations[-1])//60} min, {durations[-1]%60} sec")
-        print(f"Time Left: approx. {mins_left//60} hrs, {mins_left%60} min")
+        print(f"-< EPOCH {epoch} at {timestamp} >-")
+        print(f"\tCross-Entropy Loss: {loss} ", end='')
+        if not previous_loss is None:
+            if loss > previous_loss:
+                print(f"(+{loss-previous_loss})")
+            else:
+                print(f"(-{loss-previous_loss})")
+        else:
+            print("")
+        previous_loss = loss
+        print(f"\tTime Duration: {(durations[-1])//60} min, {durations[-1]%60} sec")
+        print(f"\tTime Left: approx. {mins_left//60} hrs, {mins_left%60} min")
 
         checkpoint(best_model, char_to_int, epoch)
 
