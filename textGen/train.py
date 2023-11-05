@@ -11,7 +11,7 @@ SAVE_PATH = "model/model-2-milton.pth"
 
 SEQ_LENGTH = 100
 
-NUM_EPOCHS = 32
+NUM_EPOCHS = 48
 BATCH_SIZE = 32
 
 # Load ascii and covert to lowercase
@@ -137,7 +137,7 @@ for epoch in range(start_epoch, NUM_EPOCHS+1):
             if loss > previous_loss:
                 print(f"(+{loss-previous_loss})")
             else:
-                print(f"(-{loss-previous_loss})")
+                print(f"(-{previous_loss-loss})")
         else:
             print("")
         previous_loss = loss
