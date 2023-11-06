@@ -133,7 +133,7 @@ for epoch in range(start_epoch, NUM_EPOCHS+1):
         timestamp = datetime.now().strftime("%H:%M:%S")
         print(f"-< EPOCH {epoch} at {timestamp} >-")
         print(f"\tCross-Entropy Loss: {loss} ", end='')
-        if not previous_loss is None:
+        if previous_loss is not None:
             if loss > previous_loss:
                 print(f"(+{loss-previous_loss})")
             else:

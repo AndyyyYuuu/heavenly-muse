@@ -11,7 +11,7 @@ print(f"Epochs trained: {epochs}")
 num_vocab = len(char_to_int)
 int_to_char = dict((i, c) for c, i in char_to_int.items())
 
-TEMPERATURE = 0.7
+TEMPERATURE = 0.5
 
 # load ascii text and covert to lowercase
 filename = "paradise_lost.txt"
