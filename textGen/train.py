@@ -11,7 +11,7 @@ SAVE_PATH = "model/model-2-milton.pth"
 
 SEQ_LENGTH = 100
 
-NUM_EPOCHS = 48
+NUM_EPOCHS = 64
 BATCH_SIZE = 32
 
 # Load ascii and covert to lowercase
