@@ -14,6 +14,8 @@ SEQ_LENGTH = 100
 NUM_EPOCHS = 64
 BATCH_SIZE = 32
 
+# device = torch.device("cpu")
+
 # Load ascii and covert to lowercase
 filename = "milton_poetry_cleaned.txt"
 raw_text = open(f"data/{filename}", 'r', encoding='utf-8').read()
@@ -45,6 +47,7 @@ X = torch.tensor(dataX, dtype=torch.float32).reshape(n_patterns, SEQ_LENGTH, 1)
 X = X / float(num_vocab)
 y = torch.tensor(dataY)
 
+# X, y = X.to(device), y.to(device)
 
 class Poet(nn.Module):
     def __init__(self):
@@ -79,7 +82,7 @@ if os.path.exists(SAVE_PATH):
         char_to_int = loaded_char_to_int
         start_epoch = loaded_epoch+1
         print("LOADED MODEL")
-        print(f"Epochs to train: {NUM_EPOCHS-start_epoch}")
+        print(f"Epochs to train: {NUM_EPOCHS-start_epoch+1}")
         print(f"Save path: {SAVE_PATH}")
         input("Enter to resume training >>> ")
     else:
@@ -109,6 +112,7 @@ for epoch in range(start_epoch, NUM_EPOCHS+1):
     init_time = time.process_time()
     model.train()
     for X_batch, y_batch in loader:
+        # X_batch, y_batch = X_batch.to(device), y_batch.to(device)
         y_pred = model(X_batch)
         loss = loss_fn(y_pred, y_batch)
         optimizer.zero_grad()
@@ -121,6 +125,7 @@ for epoch in range(start_epoch, NUM_EPOCHS+1):
 
     with torch.no_grad():
         for X_batch, y_batch in loader:
+            # X_batch, y_batch = X_batch.to(device), y_batch.to(device)
             y_pred = model(X_batch)
             loss += loss_fn(y_pred, y_batch)
         if loss < best_loss:
