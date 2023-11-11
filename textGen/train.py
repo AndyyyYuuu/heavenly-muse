@@ -1,6 +1,7 @@
 
 
 import os
+import sys
 import time
 import numpy
 import torch
@@ -107,6 +108,16 @@ print("\n*** TRAINING IN PROGRESS ***")
 def checkpoint(best_model, char_to_int, epoch):
     torch.save([best_model, char_to_int, epoch], SAVE_PATH)
 
+
+def progress_iter(it, desc):
+    return tqdm(range(len(it)),
+                desc=f'\t{desc}',
+                unit=" batches",
+                file=sys.stdout,
+                colour="GREEN",
+                bar_format="{desc}: {percentage:0.2f}%|{bar}| {n_fmt}/{total_fmt} [{elapsed} < {remaining}]")
+
+
 previous_loss = None
 # Training loop
 for epoch in range(start_epoch, NUM_EPOCHS+1):
@@ -117,7 +128,7 @@ for epoch in range(start_epoch, NUM_EPOCHS+1):
     iter_len = sum(1 for _ in loader)
     percent_complete = 1
     loading_iter = iter(loader)
-    for i in tqdm(range(len(loader)), desc=f'Training', unit="batches"):
+    for i in progress_iter(loader, "Training"):
         X_batch, y_batch = next(loading_iter)
         y_pred = model(X_batch)
         loss = loss_fn(y_pred, y_batch)
@@ -130,7 +141,7 @@ for epoch in range(start_epoch, NUM_EPOCHS+1):
     loss = 0
     with torch.no_grad():
         loading_iter = iter(loader)
-        for i in tqdm(range(len(loader)), desc=f'Validating', unit="batches"):
+        for i in progress_iter(loader, "Validating"):
             X_batch, y_batch = next(loading_iter)
             y_pred = model(X_batch)
             loss += loss_fn(y_pred, y_batch)
@@ -142,7 +153,7 @@ for epoch in range(start_epoch, NUM_EPOCHS+1):
         durations.append(round(time.process_time()-init_time))
         mins_left = round((sum(durations)/len(durations)*(NUM_EPOCHS-epoch))//60/5)*5
         timestamp = datetime.now().strftime("%H:%M:%S")
-        print(f"\tEpoch Completed {timestamp}")
+        # print(f"\tEpoch Completed {timestamp}")
         print(f"\tCross-Entropy Loss: {loss} ", end='')
         if previous_loss is not None:
             if loss > previous_loss:

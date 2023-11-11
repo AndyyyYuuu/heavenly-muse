@@ -11,7 +11,7 @@ print(f"Epochs trained: {epochs}")
 num_vocab = len(char_to_int)
 int_to_char = dict((i, c) for c, i in char_to_int.items())
 
-TEMPERATURE = 0.8
+TEMPERATURE = 1.1
 
 # load ascii text and covert to lowercase
 filename = "milton_poetry_cleaned.txt"
