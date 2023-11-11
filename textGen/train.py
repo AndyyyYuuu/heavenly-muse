@@ -1,3 +1,5 @@
+
+
 import os
 import time
 import numpy
@@ -6,6 +8,8 @@ from datetime import datetime
 from torch import nn
 from torch.utils import data
 from torch import optim
+from matplotlib import pyplot as plt
+from tqdm import tqdm
 
 SAVE_PATH = "model/model-3-milton.pth"
 
@@ -106,13 +110,15 @@ def checkpoint(best_model, char_to_int, epoch):
 previous_loss = None
 # Training loop
 for epoch in range(start_epoch, NUM_EPOCHS+1):
-
-    print(f"\n Training epoch {epoch}/{NUM_EPOCHS} ...")
+    print(f"\n--- EPOCH {epoch}/{NUM_EPOCHS} at {datetime.now().strftime('%H:%M:%S')} ---")
 
     init_time = time.process_time()
     model.train()
-    for X_batch, y_batch in loader:
-        # X_batch, y_batch = X_batch.to(device), y_batch.to(device)
+    iter_len = sum(1 for _ in loader)
+    percent_complete = 1
+    loading_iter = iter(loader)
+    for i in tqdm(range(len(loader)), desc=f'Training', unit="batches"):
+        X_batch, y_batch = next(loading_iter)
         y_pred = model(X_batch)
         loss = loss_fn(y_pred, y_batch)
         optimizer.zero_grad()
@@ -122,10 +128,10 @@ for epoch in range(start_epoch, NUM_EPOCHS+1):
     # Validation
     model.eval()
     loss = 0
-
     with torch.no_grad():
-        for X_batch, y_batch in loader:
-            # X_batch, y_batch = X_batch.to(device), y_batch.to(device)
+        loading_iter = iter(loader)
+        for i in tqdm(range(len(loader)), desc=f'Validating', unit="batches"):
+            X_batch, y_batch = next(loading_iter)
             y_pred = model(X_batch)
             loss += loss_fn(y_pred, y_batch)
         if loss < best_loss:
@@ -136,7 +142,7 @@ for epoch in range(start_epoch, NUM_EPOCHS+1):
         durations.append(round(time.process_time()-init_time))
         mins_left = round((sum(durations)/len(durations)*(NUM_EPOCHS-epoch))//60/5)*5
         timestamp = datetime.now().strftime("%H:%M:%S")
-        print(f"-< EPOCH {epoch} at {timestamp} >-")
+        print(f"\tEpoch Completed {timestamp}")
         print(f"\tCross-Entropy Loss: {loss} ", end='')
         if previous_loss is not None:
             if loss > previous_loss:
