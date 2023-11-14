@@ -24,7 +24,7 @@ BATCH_SIZE = 32
 # Load ascii and covert to lowercase
 filename = "milton_poetry_cleaned.txt"
 raw_text = open(f"data/{filename}", 'r', encoding='utf-8').read()
-raw_text = raw_text.lower()
+raw_text = raw_text#.lower()
 
 # Create map of char --> int
 chars = sorted(list(set(raw_text)))

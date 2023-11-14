@@ -16,7 +16,7 @@ TEMPERATURE = 0.8
 # load ascii text and covert to lowercase
 filename = "milton_poetry_cleaned.txt"
 raw_text = open(f"data/{filename}", 'r', encoding='utf-8').read()
-raw_text = raw_text.lower()
+raw_text = raw_text#.lower()
 
 prompt_size = 100
 gen_size = 1000
