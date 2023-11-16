@@ -19,6 +19,9 @@ SEQ_LENGTH = 100
 NUM_EPOCHS = 64
 BATCH_SIZE = 32
 
+PATIENCE = 5
+early_stop_counter = 0
+
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 def progress_iter(it, desc):
@@ -151,6 +154,13 @@ for epoch in range(start_epoch, NUM_EPOCHS+1):
         if loss < best_loss:
             best_loss = loss
             best_model = model.state_dict()
+        else:
+            early_stop_counter += 1
+
+        if early_stop_counter >= PATIENCE:
+            checkpoint(best_model, char_to_int, epoch)
+            print("\n*** EARLY STOP ***")
+            break
 
         # Fancy stats
         durations.append(round(time.process_time()-init_time))
