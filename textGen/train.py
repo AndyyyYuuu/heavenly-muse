@@ -12,19 +12,28 @@ from torch import optim
 from matplotlib import pyplot as plt
 from tqdm import tqdm
 
-SAVE_PATH = "model/model-3-milton.pth"
+SAVE_PATH = "model/model-4-shakespeare.pth"
 
 SEQ_LENGTH = 100
 
 NUM_EPOCHS = 64
 BATCH_SIZE = 32
 
-# device = torch.device("cpu")
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+def progress_iter(it, desc):
+    return tqdm(range(len(it)),
+                desc=f'\t{desc}',
+                unit=" batches",
+                file=sys.stdout,
+                colour="GREEN",
+                bar_format="{desc}: {percentage:0.2f}%|{bar}| {n_fmt}/{total_fmt} [{elapsed} < {remaining}]")
+
 
 # Load ascii and covert to lowercase
-filename = "milton_poetry_cleaned.txt"
+filename = "shakespeare_cleaned.txt"
 raw_text = open(f"data/{filename}", 'r', encoding='utf-8').read()
-raw_text = raw_text#.lower()
+raw_text = raw_text.lower()
 
 # Create map of char --> int
 chars = sorted(list(set(raw_text)))
@@ -38,7 +47,7 @@ print("Total Vocab: ", num_vocab)
 # prepare the dataset of input to output pairs encoded as integers
 dataX = []
 dataY = []
-for i in range(0, num_chars - SEQ_LENGTH, 1):
+for i in tqdm(range(0, num_chars - SEQ_LENGTH, 1), desc="Preparing Data", file=sys.stdout, colour="GREEN", bar_format="{desc}: {percentage:0.2f}%|{bar}| {n_fmt}/{total_fmt} [{elapsed} < {remaining}]"):
     seq_in = raw_text[i:i + SEQ_LENGTH]
     seq_out = raw_text[i + SEQ_LENGTH]
     dataX.append([char_to_int[char] for char in seq_in])
@@ -52,7 +61,7 @@ X = torch.tensor(dataX, dtype=torch.float32).reshape(n_patterns, SEQ_LENGTH, 1)
 X = X / float(num_vocab)
 y = torch.tensor(dataY)
 
-# X, y = X.to(device), y.to(device)
+X, y = X.to(device), y.to(device)
 
 class Poet(nn.Module):
     def __init__(self):
@@ -70,6 +79,7 @@ class Poet(nn.Module):
 
 
 model = Poet()
+model.to(device)
 
 optimizer = optim.Adam(model.parameters())
 loss_fn = nn.CrossEntropyLoss(reduction="sum")
@@ -109,15 +119,6 @@ def checkpoint(best_model, char_to_int, epoch):
     torch.save([best_model, char_to_int, epoch], SAVE_PATH)
 
 
-def progress_iter(it, desc):
-    return tqdm(range(len(it)),
-                desc=f'\t{desc}',
-                unit=" batches",
-                file=sys.stdout,
-                colour="GREEN",
-                bar_format="{desc}: {percentage:0.2f}%|{bar}| {n_fmt}/{total_fmt} [{elapsed} < {remaining}]")
-
-
 previous_loss = None
 # Training loop
 for epoch in range(start_epoch, NUM_EPOCHS+1):
@@ -130,6 +131,7 @@ for epoch in range(start_epoch, NUM_EPOCHS+1):
     loading_iter = iter(loader)
     for i in progress_iter(loader, "Training"):
         X_batch, y_batch = next(loading_iter)
+        X_batch, y_batch = X_batch.to(device), y_batch.to(device)
         y_pred = model(X_batch)
         loss = loss_fn(y_pred, y_batch)
         optimizer.zero_grad()
@@ -143,6 +145,7 @@ for epoch in range(start_epoch, NUM_EPOCHS+1):
         loading_iter = iter(loader)
         for i in progress_iter(loader, "Validating"):
             X_batch, y_batch = next(loading_iter)
+            X_batch, y_batch = X_batch.to(device), y_batch.to(device)
             y_pred = model(X_batch)
             loss += loss_fn(y_pred, y_batch)
         if loss < best_loss:
@@ -169,4 +172,4 @@ for epoch in range(start_epoch, NUM_EPOCHS+1):
         checkpoint(best_model, char_to_int, epoch)
 
 print("\n*** TRAINING COMPLETE ***")
-print(f"Model saved as \"models/{SAVE_PATH}\"")
+print(f"Model saved as \"model/{SAVE_PATH}\"")
