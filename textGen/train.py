@@ -9,7 +9,6 @@ from datetime import datetime
 from torch import nn
 from torch.utils import data
 from torch import optim
-from matplotlib import pyplot as plt
 from tqdm import tqdm
 
 SAVE_PATH = "model/model-4-shakespeare.pth"
