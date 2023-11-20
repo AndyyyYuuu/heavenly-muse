@@ -68,7 +68,7 @@ X, y = X.to(device), y.to(device)
 class Poet(nn.Module):
     def __init__(self):
         super().__init__()
-        self.lstm = nn.LSTM(input_size=1, hidden_size=256, num_layers=2, batch_first=True, dropout=0.2)
+        self.lstm = nn.LSTM(input_size=1, hidden_size=256, num_layers=3, batch_first=True, dropout=0.2)
         self.dropout = nn.Dropout(0.2)
         self.linear = nn.Linear(256, num_vocab)
     def forward(self, x):
@@ -109,7 +109,7 @@ else:
     print("TRAIN NEW MODEL")
     print(f"Epochs to train: {NUM_EPOCHS}")
     print(f"Save path: {SAVE_PATH}")
-    input("Enter to begin training >>> ")
+    # input("Enter to begin training >>> ")
 
 best_loss = numpy.inf
 durations = []
