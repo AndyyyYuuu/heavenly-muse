@@ -5,7 +5,7 @@ from torch import nn
 from torch.utils import data
 from torch import optim
 
-best_model, char_to_int, epochs = torch.load("model/model-4-shakespeare.pth")
+best_model, char_to_int, epochs = torch.load("model/model-3-milton.pth")
 print("LOADED MODEL")
 print(f"Epochs trained: {epochs}")
 num_vocab = len(char_to_int)
@@ -14,7 +14,7 @@ int_to_char = dict((i, c) for c, i in char_to_int.items())
 TEMPERATURE = 0.8
 
 # load ascii text and covert to lowercase
-filename = "shakespeare_cleaned.txt"
+filename = "milton_poetry_cleaned.txt"
 raw_text = open(f"data/{filename}", 'r', encoding='utf-8').read()
 raw_text = raw_text.lower()
 
@@ -27,7 +27,7 @@ pattern = [char_to_int[c] for c in prompt_txt]
 class Poet(nn.Module):
     def __init__(self):
         super().__init__()
-        self.lstm = nn.LSTM(input_size=1, hidden_size=256, num_layers=3, batch_first=True, dropout=0.2)
+        self.lstm = nn.LSTM(input_size=1, hidden_size=256, num_layers=2, batch_first=True, dropout=0.2)
         self.dropout = nn.Dropout(0.2)
         self.linear = nn.Linear(256, num_vocab)
     def forward(self, x):
