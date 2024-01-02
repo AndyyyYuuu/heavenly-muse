@@ -1,4 +1,4 @@
-# Heavenly Muse, WIP
+# Heavenly Muse (discontinued)
 > *The Milton-style AI gibberish generator with a fancy name.*
 
 This is a simple character-based LSTM neural network trained on John Milton's epic poem *Paradise Lost*. 
