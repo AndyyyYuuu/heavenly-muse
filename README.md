@@ -1,12 +1,21 @@
-# Heavenly Muse (discontinued)
+# Heavenly Muse
 > *The Milton-style AI gibberish generator with a fancy name.*
 
-This is a simple character-based LSTM neural network trained on John Milton's epic poem *Paradise Lost*. 
-I will be adding more complexities to this LSTM, if I can manage to understand them. 
+A simple character-based LSTM neural network trained on John Milton's epic poem *Paradise Lost*.  
+The project follows this [PyTorch LSTM text generator tutorial](https://machinelearningmastery.com/text-generation-with-lstm-in-pytorch/).  
+For more on how it works and a postmortem, see [my article](). 
+
+### Try It Out?
+**Dependencies:** `torch`, `numpy`.  
+Run `textGen/generate.py` with Python3. 
+```bash
+python3 textGen/generate.py
+```
+Or, if you couldn't be bothered, take a look at some samples below 👇👇
 
 ### Sample Generated Text
 7 Epochs, Temperature 0.6, *Paradise Lost* & *Paradise Regain'd* (model 3)
-```
+```gibberish
 oud deo ware
 mf ham spietoe mod sert—tf deg rheos;seeeemogt af susesonn
 , whe brid
@@ -46,7 +55,7 @@ ttoeae
 ```
 --- 
 60 Epochs, Temperature 1.2, *Paradise Lost* (model 2)
-```
+```gibberish
 pfante,ap swgs nftte ssdlhuifonki tf tent ,w enbruce
 pf daar  hum awgre if roarteah maadtlmh ygoah
 .if hne   tri raareuof hosntebf mor t;vte sunre
